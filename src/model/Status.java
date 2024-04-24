@@ -1,8 +1,8 @@
 /**
  * Создан для отображения статуса прогресса
  */
-
-public enum ProgressStatus {
+package model;
+public enum Status {
     NEW,
     IN_PROGRESS,
     DONE

@@ -18,6 +18,11 @@
  */
 
 
+import model.Epic;
+import model.Status;
+import model.Subtask;
+import model.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -90,17 +95,23 @@ public class TaskManager {
 
     // Обновление задачи
     public void updateTheTask(Task updateTask) {
-        tasks.put(updateTask.getTaskId(), updateTask);
+        if (tasks.containsKey(updateTask.getTaskId())) {
+            tasks.put(updateTask.getTaskId(), updateTask);
+        }
     }
 
     public void updateTheEpic(Epic updateEpic) {
-        epics.put(updateEpic.getTaskId(), updateEpic);
+        if (epics.containsKey(updateEpic.getTaskId())) {
+            epics.put(updateEpic.getTaskId(), updateEpic);
+        }
     }
 
     public void updateTheSubtask(Subtask updateSubtask) {
-        subtasks.put(updateSubtask.getTaskId(), updateSubtask);
-        int epicId = subtasks.get(updateSubtask.getTaskId()).getEpicId();
-        checkEpicStatus(epicId);
+        if (epics.containsKey(updateSubtask.getEpicId())) {
+            subtasks.put(updateSubtask.getTaskId(), updateSubtask);
+            int epicId = subtasks.get(updateSubtask.getTaskId()).getEpicId();
+            checkEpicStatus(epicId);
+        }
     }
 
     // Удаление всех задач
@@ -155,18 +166,18 @@ public class TaskManager {
         int counterDone = 0;
         ArrayList<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
         for (Integer subtaskId : subtaskIds) {
-            if (subtasks.get(subtaskId).getProgressStatus().equals(ProgressStatus.NEW)) {
+            if (subtasks.get(subtaskId).getStatus().equals(Status.NEW)) {
                 counterNew++;
-            } else if (subtasks.get(subtaskId).getProgressStatus().equals(ProgressStatus.DONE)) {
+            } else if (subtasks.get(subtaskId).getStatus().equals(Status.DONE)) {
                 counterDone++;
             }
         }
         if (subtaskIds.size() == counterNew || subtaskIds.isEmpty()) {
-            epics.get(epicId).setProgressStatus(ProgressStatus.NEW);
+            epics.get(epicId).setStatus(Status.NEW);
         } else if (subtaskIds.size() == counterDone) {
-            epics.get(epicId).setProgressStatus(ProgressStatus.DONE);
+            epics.get(epicId).setStatus(Status.DONE);
         } else {
-            epics.get(epicId).setProgressStatus(ProgressStatus.IN_PROGRESS);
+            epics.get(epicId).setStatus(Status.IN_PROGRESS);
         }
     }
 }

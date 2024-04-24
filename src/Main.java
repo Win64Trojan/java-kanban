@@ -1,3 +1,8 @@
+import model.Epic;
+import model.Status;
+import model.Subtask;
+import model.Task;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -28,14 +33,15 @@ public class Main {
         System.out.println(taskManager.getListAllSubtasks());
         System.out.println();
         // Обновляем задачи
-        taskManager.updateTheTask(new Task("Закопать картошку", "Взять лопату", task1.getTaskId(),
-                ProgressStatus.IN_PROGRESS));
+        taskManager.updateTheTask(new Task("Закопать картошку", "Взять лопату",
+                task1.getTaskId()));
+                task1.setStatus(Status.IN_PROGRESS);
         taskManager.updateTheEpic(new Epic("Искать клад","Досать карту", epic1.getTaskId(),
-                epic1.getProgressStatus(), epic1.getSubtaskIds()));
+                epic1.getStatus(), epic1.getSubtaskIds()));
         taskManager.updateTheSubtask(new Subtask("Перестать думать","Отключиться",
-                subtask1.getTaskId(), ProgressStatus.IN_PROGRESS, 3));
+                subtask1.getTaskId(), Status.IN_PROGRESS, 3));
         taskManager.updateTheSubtask(new Subtask("Найти деньги на сахар","Идти на работу",
-                subtask3.getTaskId(), ProgressStatus.DONE, 4));
+                subtask3.getTaskId(), Status.DONE, 4));
         System.out.println(taskManager.getListAllTasks());
         System.out.println();
         System.out.println(taskManager.getListAllEpics());

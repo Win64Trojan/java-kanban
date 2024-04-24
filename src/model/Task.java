@@ -9,6 +9,7 @@
  * 1. Геттеры и сеттеры
  * 2. Переопределенные методы equals-hashCode-toString.
  */
+package model;
 
 import java.util.Objects;
 
@@ -17,24 +18,25 @@ public class Task {
     protected String taskName;
     protected String taskDescription;
     protected int taskId;
-    protected ProgressStatus progressStatus = ProgressStatus.NEW;  // статус прогресса задачи
+    protected Status status = Status.NEW;  // статус прогресса задачи
 
     public Task(String taskName, String taskDescription) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
     }
 
-    public Task(String taskName, String taskDescription, ProgressStatus progressStatus) {
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.progressStatus = progressStatus;
-    }
 
-    public Task(String taskName, String taskDescription, int taskId, ProgressStatus progressStatus) {
+    public Task(String taskName, String taskDescription, int taskId) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskId = taskId;
-        this.progressStatus = progressStatus;
+    }
+
+    public Task(String taskName, String taskDescription, int taskId, Status status) {
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskId = taskId;
+        this.status = status;
     }
 
     public String getTaskName() {
@@ -49,16 +51,16 @@ public class Task {
         return taskId;
     }
 
-    public ProgressStatus getProgressStatus() {
-        return progressStatus;
+    public Status getStatus() {
+        return status;
     }
 
     public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
 
-    public void setProgressStatus(ProgressStatus progressStatus) {
-        this.progressStatus = progressStatus;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -69,21 +71,21 @@ public class Task {
         return taskId == task.taskId &&
                 Objects.equals(taskName, task.taskName) &&
                 Objects.equals(taskDescription, task.taskDescription) &&
-                progressStatus == task.progressStatus;
+                status == task.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskName, taskDescription, taskId, progressStatus);
+        return Objects.hash(taskName, taskDescription, taskId, status);
     }
 
     @Override
     public String toString() {
-        return "\nTask{" +
+        return "\nmodel.Task{" +
                 "Название задачи='" + taskName + '\'' +
                 ", Описание задачи='" + taskDescription + '\'' +
                 ", Id задачи=" + taskId +
-                ", Статус задачи=" + progressStatus +
+                ", Статус задачи=" + status +
                 '}';
     }
 }
