@@ -17,7 +17,7 @@ public class Task {
 
     protected String taskName;
     protected String taskDescription;
-    protected int taskId;
+    protected Integer taskId;
     protected Status status = Status.NEW;  // статус прогресса задачи
 
     public Task(String taskName, String taskDescription) {
@@ -25,19 +25,13 @@ public class Task {
         this.taskDescription = taskDescription;
     }
 
-
-    public Task(String taskName, String taskDescription, int taskId) {
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.taskId = taskId;
+    public Task(Task task) {
+        this(task.taskName, task.taskDescription);
+        this.status = task.status;
+        this.taskId = task.taskId;
     }
 
-    public Task(String taskName, String taskDescription, int taskId, Status status) {
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.taskId = taskId;
-        this.status = status;
-    }
+
 
     public String getTaskName() {
         return taskName;
@@ -47,7 +41,7 @@ public class Task {
         return taskDescription;
     }
 
-    public int getTaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
@@ -63,6 +57,14 @@ public class Task {
         this.status = status;
     }
 
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,7 +78,7 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskName, taskDescription, taskId, status);
+        return Objects.hashCode(taskId);
     }
 
     @Override

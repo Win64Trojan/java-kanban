@@ -9,44 +9,30 @@ package model;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private int epicId;
+    private final Integer epicId;
 
-    public Subtask(String taskName, String taskDescription, int epicId) {
-        super(taskName, taskDescription);
+    public Subtask(String name, String description, Integer epicId) {
+        super(description, name);
         this.epicId = epicId;
     }
 
-    public Subtask(String taskName, String taskDescription, int taskId, Status status, int epicId) {
-        super(taskName, taskDescription, taskId, status);
-        this.epicId = epicId;
+    public Subtask(Subtask subtask) {
+        super(subtask);
+        this.epicId = subtask.epicId;
     }
 
-    public int getEpicId() {
+    public Integer getEpicId() {
         return epicId;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Subtask subtask = (Subtask) o;
-        return epicId == subtask.epicId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), epicId);
-    }
-
-    @Override
     public String toString() {
-        return "\nmodel.Subtask{" +
-                "Id Эпика в котором хранится данная подзадача=" + epicId +
-                ", Название задачи='" + taskName + '\'' +
-                ", Описание задачи='" + taskDescription + '\'' +
-                ", Id подзадачи=" + taskId +
-                ", Статус подзадачи=" + status +
+        return "Subtask{" +
+                "epicId=" + epicId +
+                ", name='" + taskName + '\'' +
+                ", description='" + taskDescription + '\'' +
+                ", id=" + taskId +
+                ", status=" + status +
                 '}';
     }
 }
