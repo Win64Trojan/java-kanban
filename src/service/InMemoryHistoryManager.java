@@ -2,6 +2,7 @@ package service;
 
 import model.Task;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,27 +12,25 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return copyViewHistory();
+        return new LinkedList<>(history);
     }
 
     @Override
     public void add(Task task) {
         if (task != null) {
-            history.add(new Task(task));
+            Iterator<Task> iterator = history.iterator();
+            while (iterator.hasNext()){
+                Task existingTask = iterator.next();
+                if (existingTask.equals(task)){
+                    // Удаляем существующую задачу из истории
+                    iterator.remove();
+                }
+            }
+            history.add(task);
             if (history.size() > SIZE_HISTORY) {
                 history.removeFirst();
             }
         }
-    }
-
-    private List<Task> copyViewHistory() {
-        List<Task> list = new ArrayList<>();
-
-        for (Task task : history) {
-            list.add(new Task(task));
-        }
-
-        return list;
     }
 }
 

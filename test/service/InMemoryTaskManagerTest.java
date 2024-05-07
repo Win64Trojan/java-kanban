@@ -45,14 +45,15 @@ class InMemoryTaskManagerTest {
     @Test
     public void checkImmutabilityOfEpicWhenCreatedValueChanged() {
         Epic created = manager.createNewEpic(new Epic("a", ""));
-        created.setTaskName("b");
-        Assertions.assertNotEquals(created.getTaskName(), manager.getEpicById(created.getTaskId()).getTaskName());
+        Epic modifiedEpic = new Epic(created.getTaskName(), created.getTaskDescription());
+        modifiedEpic.setTaskName("b");
+        Assertions.assertNotEquals(modifiedEpic.getTaskName(), manager.getEpicById(created.getTaskId()).getTaskName());
     }
 
     @Test
     public void checkImmutabilityOfEpicWhenSourceChanged() {
         Epic source = new Epic("a", "");
-        Epic created = manager.createNewEpic(source);
+        Epic created = manager.createNewEpic(new Epic(source.getTaskName(), source.getTaskDescription()));
         source.setTaskName("b");
         Assertions.assertNotEquals(source.getTaskName(), manager.getEpicById(created.getTaskId()).getTaskName());
     }
@@ -77,14 +78,16 @@ class InMemoryTaskManagerTest {
     @Test
     public void checkImmutabilityOfTaskWhenCreatedValueChanged() {
         Task created = manager.createNewTask(new Task("a", ""));
-        created.setTaskName("b");
-        Assertions.assertNotEquals(created.getTaskName(), manager.getTaskById(created.getTaskId()).getTaskName());
+        Task retrieved = manager.getTaskById(created.getTaskId());
+        Task updated = new Task(retrieved);
+        updated.setTaskName("b");
+        Assertions.assertNotEquals(updated.getTaskName(), manager.getTaskById(created.getTaskId()).getTaskName());
     }
 
     @Test
     public void checkImmutabilityOfTaskWhenSourceChanged() {
         Task source = new Task("a", "");
-        Task created = manager.createNewTask(source);
+        Task created = manager.createNewTask(new Task(source));
         source.setTaskName("b");
         Assertions.assertNotEquals(source.getTaskName(), manager.getTaskById(created.getTaskId()).getTaskName());
     }

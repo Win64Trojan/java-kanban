@@ -50,8 +50,8 @@ public class Main {
 
         manager.removeEpicById(epic1.getTaskId());
 
-        manager.getTaskById(epic1.getTaskId());
-        manager.getTaskById(epic2.getTaskId());
+        manager.getTaskById(task1.getTaskId());
+        manager.getTaskById(task2.getTaskId());
 
         printTasks();
     }

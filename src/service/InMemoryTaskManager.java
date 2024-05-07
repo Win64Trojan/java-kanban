@@ -5,7 +5,7 @@ package service;
  * В него входят следующий поля:
  * 1. Идентификационный номер - Который присваивается при создании новой задачи.
  * При этом у каждой задачи свой универсальный номер, который не будет повторяться.
- * 2. final HashMap - В которых будут храниться все задачи, эпики и подзадачи.
+ * 2. final Map - В которых будут храниться все задачи, эпики и подзадачи.
  * <p>
  * Данный клас реализует следующий методы для всех типов задач, эпиков и подзадач.
  * 1. Создание
@@ -16,6 +16,7 @@ package service;
  * 6. Удаление всех задач
  * 7. Удаление по идентификатору
  * 8. Проверка статуса
+ * 9. Получение истории просмотров задач
  */
 
 
@@ -26,29 +27,34 @@ import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
 
     private Integer idNumber = 0;
 
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
 
     // Создание. Объект должен передаваться в качестве параметров
     @Override
     public Task createNewTask(Task newTask) {
         newTask.setTaskId(++idNumber);
-        tasks.put(newTask.getTaskId(), new Task(newTask));
+        tasks.put(newTask.getTaskId(), newTask);
         return newTask;
     }
 
     @Override
     public Epic createNewEpic(Epic newEpic) {
         newEpic.setTaskId(++idNumber);
-        epics.put(newEpic.getTaskId(), new Epic(newEpic));
+        epics.put(newEpic.getTaskId(), newEpic);
         return newEpic;
     }
 
@@ -88,8 +94,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (task == null) {
             return null;
         }
-        historyManager.add(task);
-        return new Task(task);
+        Task newTaks = new Task(task);
+        historyManager.add(newTaks);
+        return newTaks;
     }
 
     @Override
@@ -98,8 +105,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return null;
         }
-        historyManager.add(epic);
-        return new Epic(epic);
+        Epic newEpic = new Epic(epic);
+        historyManager.add(newEpic);
+        return newEpic;
     }
 
     @Override
@@ -108,8 +116,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask == null) {
             return null;
         }
-        historyManager.add(subtask);
-        return new Subtask(subtask);
+        Subtask newSubtask = new Subtask(subtask);
+        historyManager.add(newSubtask);
+        return newSubtask;
     }
 
 
@@ -118,8 +127,10 @@ public class InMemoryTaskManager implements TaskManager {
     public Task updateTask(Task newTask) {
         if (tasks.containsKey(newTask.getTaskId())) {
             tasks.put(newTask.getTaskId(), new Task(newTask));
+        } else {
+            System.err.println("Данной задачи не существует");
         }
-        return newTask;
+        return new Task(newTask);
     }
 
     @Override
