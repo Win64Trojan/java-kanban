@@ -92,11 +92,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-
     public void linkLast(Task task) {
         final Node<Task> newNode = new Node<>(null, task, null);
 
-        if (isEmpty()){
+        if (isEmpty()) {
             head = newNode;
         } else {
             tail.setNext(newNode);
@@ -106,7 +105,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         tasks.put(tail.getTask().getTaskId(), tail);
     }
 
-    private boolean isEmpty(){
+    private boolean isEmpty() {
         return head == null;
     }
 
@@ -123,7 +122,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         if (node == tail) {
             tail = node.getPrev();
-        } else  {
+        } else {
             node.getNext().setPrev(node.getPrev());
         }
 
