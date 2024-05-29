@@ -6,7 +6,6 @@
  */
 package model;
 
-import java.util.Objects;
 
 public class Subtask extends Task {
     private final Integer epicId;
