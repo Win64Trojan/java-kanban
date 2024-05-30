@@ -11,56 +11,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final Map<Integer, Node<Task>> tasks = new HashMap<>();
-
     private Node<Task> head = null;
     private Node<Task> tail = null;
-
-    private class Node<T> {
-
-        private final T task;
-        private Node<T> next;
-        private Node<T> prev;
-
-        public Node(Node<T> prev, T task, Node<T> next) {
-            this.task = task;
-            this.next = next;
-            this.prev = prev;
-        }
-
-        public T getTask() {
-            return task;
-        }
-
-        public Node<T> getNext() {
-            return next;
-        }
-
-        public Node<T> getPrev() {
-            return prev;
-        }
-
-        public void setNext(Node<T> next) {
-            this.next = next;
-        }
-
-        public void setPrev(Node<T> prev) {
-            this.prev = prev;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node<?> node = (Node<?>) o;
-            return Objects.equals(task, node.task) && Objects.equals(next, node.next) && Objects.equals(prev, node.prev);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(task, next, prev);
-        }
-    }
+    private final Map<Integer, Node<Task>> tasks = new HashMap<>();
 
     @Override
     public List<Task> getHistory() {
@@ -146,6 +99,51 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
+    private class Node<T> {
+
+        private final T task;
+        private Node<T> next;
+        private Node<T> prev;
+
+        public Node(Node<T> prev, T task, Node<T> next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
+
+        public T getTask() {
+            return task;
+        }
+
+        public Node<T> getNext() {
+            return next;
+        }
+
+        public Node<T> getPrev() {
+            return prev;
+        }
+
+        public void setNext(Node<T> next) {
+            this.next = next;
+        }
+
+        public void setPrev(Node<T> prev) {
+            this.prev = prev;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node<?> node = (Node<?>) o;
+            return Objects.equals(task, node.task) && Objects.equals(next, node.next) && Objects.equals(prev, node.prev);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(task, next, prev);
+        }
+    }
 }
 
 
