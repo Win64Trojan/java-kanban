@@ -64,6 +64,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
+        if (isEmpty()) {
+            System.err.println("История пустая");
+        }
         return getTasks();
     }
 
