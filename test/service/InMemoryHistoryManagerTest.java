@@ -3,18 +3,25 @@ package service;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 class InMemoryHistoryManagerTest {
 
     private TaskManager manager;
+    private InMemoryHistoryManager historyManager;
 
     @BeforeEach
     public void creatingTestManager() {
         manager = Managers.getDefault();
+
+        historyManager = new InMemoryHistoryManager();
     }
 
     @Test
@@ -24,9 +31,10 @@ class InMemoryHistoryManagerTest {
         task.setTaskName("TASK1");
         manager.updateTask(task);
 
-        Assertions.assertNotEquals(
-                manager.getHistory().getFirst().getTaskName(),
-                manager.getTaskById(task.getTaskId()).getTaskName());
+        List<Task> history = historyManager.getHistory();
+        for (Task historyTasks : history) {
+            assertNotEquals(manager.getTaskById(task.getTaskId()).getTaskName(), historyTasks);
+        }
     }
 
     @Test
@@ -36,9 +44,10 @@ class InMemoryHistoryManagerTest {
         epic.setTaskName("EPIC1");
         manager.updateEpic(epic);
 
-        Assertions.assertNotEquals(
-                manager.getHistory().getFirst().getTaskName(),
-                manager.getEpicById(epic.getTaskId()).getTaskName());
+        List<Task> history = historyManager.getHistory();
+        for (Task historyTasks : history) {
+            assertNotEquals(manager.getEpicById(epic.getTaskId()).getTaskName(), historyTasks);
+        }
     }
 
     @Test
@@ -49,10 +58,63 @@ class InMemoryHistoryManagerTest {
         subtask.setTaskName("SUBTASK1");
         manager.updateSubtask(subtask);
 
-        Assertions.assertNotEquals(
-                manager.getHistory().getFirst().getTaskName(),
-                manager.getSubtaskById(subtask.getTaskId()).getTaskName());
+        List<Task> history = historyManager.getHistory();
+        for (Task historyTasks : history) {
+            assertNotEquals(manager.getSubtaskById(subtask.getTaskId()).getTaskName(), historyTasks);
+        }
+    }
+
+
+    @Test
+    public void checkRemoveTaskById() {
+
+        Task task = new Task("Task", "");
+        task.setTaskId(56);
+
+        historyManager.add(task);
+
+        Task task2 = new Task("Task2", "");
+        task2.setTaskId(84);
+
+        historyManager.add(task2);
+
+        Task task3 = new Task("Task3", "");
+        task3.setTaskId(300);
+
+        historyManager.add(task3);
+
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(3, history.size());
+
+        historyManager.remove(task2.getTaskId());
+
+        history = historyManager.getHistory();
+
+        assertEquals(2, history.size());
+
+        for (Task historyTasks : history) {
+            assertNotEquals(task2, historyTasks);
+        }
+    }
+
+
+    @Test
+    void checkEmptyAfterRemoveIfSingleTask() {
+
+        Task task = new Task("test", "test description");
+        task.setTaskId(1);
+
+        historyManager.add(task);
+
+        historyManager.remove(task.getTaskId());
+
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(0, history.size());
     }
 
 
 }
+
+

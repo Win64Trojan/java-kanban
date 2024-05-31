@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 class InMemoryTaskManagerTest {
 
     private TaskManager manager;
@@ -91,4 +92,5 @@ class InMemoryTaskManagerTest {
         source.setTaskName("b");
         Assertions.assertNotEquals(source.getTaskName(), manager.getTaskById(created.getTaskId()).getTaskName());
     }
+
 }

@@ -2,13 +2,13 @@ import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
-import service.InMemoryTaskManager;
 import service.Managers;
 import service.TaskManager;
 
 public class Main {
 
     private static final TaskManager manager = Managers.getDefault();
+
 
     public static void main(String[] args) {
         System.out.println("* Создание объектов *");
@@ -74,10 +74,20 @@ public class Main {
             System.out.println(subtask);
         }
 
+
+        Task task3 = manager.createNewTask(new Task("Task3", "Description"));
+        manager.getTaskById(8);
+        Task task4 = manager.createNewTask(new Task("Task4", "Description"));
+        manager.getTaskById(9);
+
+        manager.removeTaskById(9);
         System.out.println("История:");
         for (Task task : manager.getHistory()) {
             System.out.println(task);
         }
+
+
+
 
 
     }
