@@ -101,10 +101,10 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
+                " id=" + taskId +
                 "subtasksSize=" + subtasks.size() +
                 ", name='" + taskName + '\'' +
                 ", description='" + taskDescription + '\'' +
-                ", id=" + taskId +
                 ", status=" + status +
                 '}';
     }
