@@ -7,10 +7,13 @@ import model.Subtask;
 import model.Task;
 import model.TaskType;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
@@ -55,6 +58,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Task createNewTask(Task newTask) {
+        if (newTask == null) {
+            throw new IllegalArgumentException("В аргумент создания задачи передан null");
+        }
         Task task = super.createNewTask(newTask);
         save();
         return task;
@@ -63,6 +69,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Epic createNewEpic(Epic newEpic) {
+        if (newEpic == null) {
+            throw new IllegalArgumentException("В аргумент создания эпика передан null");
+        }
         Epic epic = super.createNewEpic(newEpic);
         save();
         return epic;
@@ -71,6 +80,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Subtask createNewSubtask(Subtask newSubtask) {
+        if (newSubtask == null) {
+            throw new IllegalArgumentException("В аргумент создания сабтаска передан null");
+        }
         Subtask subtask = super.createNewSubtask(newSubtask);
         save();
         return subtask;
@@ -221,7 +233,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     private void save() {
-        try (FileWriter writer = new FileWriter(outPutFile)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outPutFile.toURI()), StandardCharsets.UTF_8)) {
             writer.write(title);
 
             for (Task task : tasks.values()) {
