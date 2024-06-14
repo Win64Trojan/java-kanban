@@ -32,7 +32,6 @@ public class Task {
     }
 
 
-
     public String getTaskName() {
         return taskName;
     }
@@ -83,10 +82,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\nmodel.Task{" +
+        return "model.Task{" +
+                "id задачи=" + taskId +
                 "Название задачи='" + taskName + '\'' +
                 ", Описание задачи='" + taskDescription + '\'' +
-                ", Id задачи=" + taskId +
                 ", Статус задачи=" + status +
                 '}';
     }
