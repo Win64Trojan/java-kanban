@@ -13,12 +13,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import static model.TaskType.SUBTASK;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File outPutFile;
 
-    private static final String title = "id,type,name,status,description,epic";
+    private static final String title = "id,type,name,status,description,epic,start_time,duration";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     FileBackedTaskManager(File outPutFile) {
         this.outPutFile = outPutFile;
@@ -26,39 +35,49 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public static void main(String[] args) {
+        try {
+            File fileSave = new File("saveTasks.csv");
 
-        File fileSave = new File("saveTasks.csv");
+            FileBackedTaskManager taskManager1 = new FileBackedTaskManager(fileSave);
+            Task task = new Task("Купить кувшин", "Найти хороший магазин кувшинов", LocalDateTime.of(2024, Month.JUNE, 21, 0, 0), Duration.ofMinutes(10));
+            taskManager1.createNewTask(task);
 
-        FileBackedTaskManager taskManager1 = new FileBackedTaskManager(fileSave);
-        Task task = new Task("Купить кувшин", "Найти хороший магазин кувшинов");
-        taskManager1.createNewTask(task);
+            Task task2 = new Task("Купить машину", "Найти хорошего консультанта", LocalDateTime.of(2024, Month.JUNE, 21, 0, 0), Duration.ofMinutes(10));
+            taskManager1.createNewTask(task2);
 
-        Task task2 = new Task("Купить машину", "Найти хорошего консультанта");
-        taskManager1.createNewTask(task2);
+            Epic epic = new Epic("Праздник", "Найти прадздничные шарики");
+            taskManager1.createNewEpic(epic);
 
-        Epic epic = new Epic("Отпуск", "Найти вещи для отдыха");
-        taskManager1.createNewEpic(epic);
+            Subtask subTask = new Subtask("Лотерея", "Купить лотерейный билет", LocalDateTime.of(2024, Month.JUNE, 23, 10, 20), Duration.ofMinutes(1), epic.getTaskId());
+            taskManager1.createNewSubtask(subTask);
+
+            Subtask subTask2 = new Subtask("Ботинки", "Почистить ботинки", LocalDateTime.of(2024, Month.JUNE, 23, 10, 30), Duration.ofMinutes(1), epic.getTaskId());
+            taskManager1.createNewSubtask(subTask2);
 
 
-        FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(fileSave);
+            FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(fileSave);
 
-        if (taskManager1.getListAllTasks().size() != taskManager2.getListAllTasks().size()) {
-            System.out.println("Размер задач не равны");
-        }
+            if (taskManager1.getListAllTasks().size() != taskManager2.getListAllTasks().size()) {
+                System.out.println("Размер задач не равны");
+            }
 
-        if (taskManager1.getListAllSubtasks().size() != taskManager2.getListAllSubtasks().size()) {
-            System.out.println("Размер подзадач не равны");
-        }
+            if (taskManager1.getListAllSubtasks().size() != taskManager2.getListAllSubtasks().size()) {
+                System.out.println("Размер подзадач не равны");
+            }
 
-        if (taskManager1.getListAllEpics().size() != taskManager2.getListAllEpics().size()) {
-            System.out.println("Размер Эпика не равны");
+            if (taskManager1.getListAllEpics().size() != taskManager2.getListAllEpics().size()) {
+                System.out.println("Размер Эпика не равны");
+            }
+            System.out.println(taskManager1.getPrioritizedTasks());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
     public Task createNewTask(Task newTask) {
         if (newTask == null) {
-            throw new IllegalArgumentException("В аргумент создания задачи передан null");
+            return null;
         }
         Task task = super.createNewTask(newTask);
         save();
@@ -69,7 +88,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     @Override
     public Epic createNewEpic(Epic newEpic) {
         if (newEpic == null) {
-            throw new IllegalArgumentException("В аргумент создания эпика передан null");
+            return null;
         }
         Epic epic = super.createNewEpic(newEpic);
         save();
@@ -80,7 +99,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     @Override
     public Subtask createNewSubtask(Subtask newSubtask) {
         if (newSubtask == null) {
-            throw new IllegalArgumentException("В аргумент создания сабтаска передан null");
+            return null;
         }
         Subtask subtask = super.createNewSubtask(newSubtask);
         save();
@@ -126,8 +145,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Subtask getSubtaskById(Integer id) {
+        Subtask subtask = super.getSubtaskById(id);
         save();
-        return super.getSubtaskById(id);
+        return subtask;
 
     }
 
@@ -206,13 +226,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             String[] lines = Files.readString(file.toPath()).split("\n");
             FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
 
+            List<Task> tasks = Arrays.stream(lines)
+                    .skip(1)
+                    .map(line -> Optional.ofNullable(convertStringToTask(line)))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
 
-            for (String line : lines) {
-                if (line.equals(title) || line.isBlank()) {
-                    continue;
-                }
 
-                Task task = convertStringToTask(line);
+            for (Task task : tasks) {
                 TaskType taskType = toEnum(task);
                 switch (taskType) {
                     case TASK -> fileBackedTaskManager.createNewTask(task);
@@ -261,10 +283,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         String description = items[4];
         Status status = stringToStatus(items[3]);
 
+        LocalDateTime startDateTime = null;
+        if (!items[6].isBlank()) {
+            startDateTime = LocalDateTime.parse(items[6], DATE_TIME_FORMATTER);
+        }
+
+        Duration duration = Duration.ofMinutes(Integer.parseInt(items[7]));
+
+
         switch (taskType) {
 
             case TASK -> {
-                Task task = new Task(name, description);
+                Task task = new Task(name, description, startDateTime, duration);
                 task.setTaskId(id);
                 return task;
             }
@@ -278,12 +308,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
             case SUBTASK -> {
                 int epicId = Integer.parseInt(items[5]);
-                Subtask subTask = new Subtask(name, description, epicId);
+                Subtask subTask = new Subtask(name, description, startDateTime, duration, epicId);
                 subTask.setTaskId(id);
                 return subTask;
             }
 
-            default -> throw new IllegalStateException("Неверное значение: " + taskType);
+            default -> {
+                return null;
+            }
         }
     }
 
@@ -292,14 +324,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         switch (taskType) {
 
             case EPIC, TASK -> {
-                return String.format("%d,%s,%s,%s,%s,", task.getTaskId(), taskType, task.getTaskName(),
-                        task.getStatus(), task.getTaskDescription());
+                return String.format("%d,%s,%s,%s,%s,,%s,%d", task.getTaskId(), taskType, task.getTaskName(),
+                        task.getStatus(), task.getTaskDescription(),
+                        task.getStartTime() != null ? task.getStartTime().format(DATE_TIME_FORMATTER) : "",
+                        task.getDuration().toMinutes());
             }
+
 
             case SUBTASK -> {
                 Subtask subTask = (Subtask) task;
-                return String.format("%d,%s,%s,%s,%s,%d", subTask.getTaskId(), taskType, subTask.getTaskName(),
-                        subTask.getStatus(), subTask.getTaskDescription(), subTask.getEpicId());
+                return String.format("%d,%s,%s,%s,%s,%d,%s,%d", subTask.getTaskId(), taskType, subTask.getTaskName(),
+                        subTask.getStatus(), subTask.getTaskDescription(), subTask.getEpicId(),
+                        subTask.getStartTime().format(DATE_TIME_FORMATTER), subTask.getDuration().toMinutes());
             }
         }
 
@@ -308,7 +344,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     private static TaskType toEnum(Task task) {
         if (task instanceof Subtask) {
-            return TaskType.SUBTASK;
+            return SUBTASK;
         } else if (task instanceof Epic) {
             return TaskType.EPIC;
         }
