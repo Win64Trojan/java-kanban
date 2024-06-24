@@ -8,23 +8,28 @@
  */
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Epic extends Task {
 
-
     private final HashMap<Integer, Subtask> subtasks;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, null, Duration.ofMinutes(0));
         subtasks = new HashMap<>();
     }
 
     public Epic(Epic epic) {
-        super(epic);
-        this.subtasks = deepCopyHashMap(epic);
+        super(epic.getTaskName(), epic.getTaskDescription(), null, Duration.ofMinutes(0));
+        this.taskId = getTaskId();
+        this.endTime = null;
+        this.subtasks = new HashMap<>();
     }
 
     private HashMap<Integer, Subtask> deepCopyHashMap(Epic epic) {
@@ -98,14 +103,48 @@ public class Epic extends Task {
         }
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
+
+        String startTimeString = "";
+        String endTimeString = "";
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+
+        if (startTime != null) {
+            startTimeString = startTime.format(dateTimeFormatter);
+        }
+
+        if (endTime != null) {
+            endTimeString = endTime.format(dateTimeFormatter);
+        }
+
         return "Epic{" +
                 " id=" + taskId +
-                "subtasksSize=" + subtasks.size() +
+                ", subtasksSize=" + subtasks.size() +
                 ", name='" + taskName + '\'' +
                 ", description='" + taskDescription + '\'' +
                 ", status=" + status +
+                ", start_time=" + startTimeString +
+                ", duration=" + duration.toMinutes() + "мин." +
+                ", end_time=" + endTimeString +
                 '}';
     }
 }

@@ -11,22 +11,29 @@
  */
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Comparable<Task> {
 
     protected String taskName;
     protected String taskDescription;
     protected Integer taskId;
     protected Status status = Status.NEW;  // статус прогресса задачи
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
-    public Task(String taskName, String taskDescription) {
+    public Task(String taskName, String taskDescription, LocalDateTime startTime, Duration duration) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public Task(Task task) {
-        this(task.taskName, task.taskDescription);
+        this(task.taskName, task.taskDescription, task.startTime, task.duration);
         this.status = task.status;
         this.taskId = task.taskId;
     }
@@ -48,6 +55,18 @@ public class Task {
         return status;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
     public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
@@ -62,6 +81,14 @@ public class Task {
 
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription;
+    }
+
+    @Override
+    public int compareTo(Task t) {
+        if (startTime == null || startTime.isAfter(t.getStartTime())) {
+            return 1;
+        }
+        return -1;
     }
 
     @Override
@@ -82,11 +109,18 @@ public class Task {
 
     @Override
     public String toString() {
+        String startTimeString = "";
+        if (startTime != null) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+            startTimeString = startTime.format(dateTimeFormatter);
+        }
         return "model.Task{" +
                 "id задачи=" + taskId +
                 "Название задачи='" + taskName + '\'' +
                 ", Описание задачи='" + taskDescription + '\'' +
                 ", Статус задачи=" + status +
+                ", start_time=" + startTimeString +
+                ", duration=" + duration.toMinutes() + "мин." +
                 '}';
     }
 }

@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 
 class InMemoryTaskManagerTest {
 
@@ -20,14 +24,16 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void SubtaskCanNotBeEpicToItself() {
-        Subtask subtask = manager.createNewSubtask(new Subtask("", "", 0));
+        Subtask subtask = manager.createNewSubtask(new Subtask("", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1), 0));
         Assertions.assertNull(subtask.getTaskId());
     }
 
     @Test
     public void checkThatManagerCanCreateAndGiveSubtaskById() {
         Epic epic = manager.createNewEpic(new Epic("", ""));
-        Subtask subtask = manager.createNewSubtask(new Subtask("", "", epic.getTaskId()));
+        Subtask subtask = manager.createNewSubtask(new Subtask("", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1), epic.getTaskId()));
         Assertions.assertNotNull(manager.getSubtaskById(subtask.getTaskId()));
     }
 
@@ -39,7 +45,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void checkThatManagerCanCreateAndGiveTaskById() {
-        Task task = manager.createNewTask(new Task("", ""));
+        Task task = manager.createNewTask(new Task("", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1)));
         Assertions.assertNotNull(manager.getTaskById(task.getTaskId()));
     }
 
@@ -62,7 +69,8 @@ class InMemoryTaskManagerTest {
     @Test
     public void checkImmutabilityOfSubtaskWhenCreatedValueChanged() {
         Epic epic = manager.createNewEpic(new Epic("", ""));
-        Subtask created = manager.createNewSubtask(new Subtask("a", "", epic.getTaskId()));
+        Subtask created = manager.createNewSubtask(new Subtask("a", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1), epic.getTaskId()));
         created.setTaskName("b");
         Assertions.assertNotEquals(created.getTaskName(), manager.getSubtaskById(created.getTaskId()).getTaskName());
     }
@@ -70,7 +78,8 @@ class InMemoryTaskManagerTest {
     @Test
     public void checkImmutabilityOfSubtaskWhenSourceChanged() {
         Epic epic = manager.createNewEpic(new Epic("", ""));
-        Subtask source = new Subtask("a", "", epic.getTaskId());
+        Subtask source = new Subtask("a", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1), epic.getTaskId());
         Subtask created = manager.createNewSubtask(source);
         source.setTaskName("b");
         Assertions.assertNotEquals(source.getTaskName(), manager.getSubtaskById(created.getTaskId()).getTaskName());
@@ -78,7 +87,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void checkImmutabilityOfTaskWhenCreatedValueChanged() {
-        Task created = manager.createNewTask(new Task("a", ""));
+        Task created = manager.createNewTask(new Task("a", "", LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1)));
         Task retrieved = manager.getTaskById(created.getTaskId());
         Task updated = new Task(retrieved);
         updated.setTaskName("b");
@@ -87,10 +96,10 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void checkImmutabilityOfTaskWhenSourceChanged() {
-        Task source = new Task("a", "");
+        Task source = new Task("a", "",
+                LocalDateTime.of(2024, Month.JUNE, 19, 10, 20), Duration.ofMinutes(1));
         Task created = manager.createNewTask(new Task(source));
         source.setTaskName("b");
         Assertions.assertNotEquals(source.getTaskName(), manager.getTaskById(created.getTaskId()).getTaskName());
     }
-
 }
