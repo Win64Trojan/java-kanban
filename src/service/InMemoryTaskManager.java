@@ -74,7 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.setEndTime(newSubtask.getEndTime());
             }
 
-            epic.setDuration(epic.getDuration().plus(newSubtask.getDuration()));
+            epic.addDuration(newSubtask.getDuration());
 
             epic.updateStatus();
         }
@@ -297,6 +297,4 @@ public class InMemoryTaskManager implements TaskManager {
                 .toList();
         return !intersectedTasks.isEmpty();
     }
-
-
 }
