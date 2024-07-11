@@ -2,16 +2,25 @@ package hundlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import service.TaskManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-abstract class BaseHttpHandler {
+abstract class BaseHttpHandler implements HttpHandler {
     protected final Gson gson;
+
+    protected TaskManager taskManager;
 
     public BaseHttpHandler(Gson gson) {
         this.gson = gson;
+    }
+
+    public BaseHttpHandler(Gson gson, TaskManager taskManager) {
+        this.gson = gson;
+        this.taskManager = taskManager;
     }
 
     protected void sendText(HttpExchange h, int responseCode, String text) throws IOException {

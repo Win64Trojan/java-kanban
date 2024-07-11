@@ -8,11 +8,11 @@ import service.TaskManager;
 import java.io.IOException;
 
 public class UserHandler extends BaseHttpHandler implements HttpHandler {
-    protected TaskManager taskManager;
+
 
     public UserHandler(Gson gson, TaskManager taskManager) {
-        super(gson);
-        this.taskManager = taskManager;
+        super(gson, taskManager);
+
     }
 
     public void handle(HttpExchange exchange) throws IOException {
