@@ -7,7 +7,7 @@ import service.TaskManager;
 
 import java.io.IOException;
 
-public class UserHandler extends BaseHttpHandler implements HttpHandler {
+public class UserHandler extends BaseHttpHandler {
 
 
     public UserHandler(Gson gson, TaskManager taskManager) {

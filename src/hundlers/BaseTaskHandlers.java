@@ -7,7 +7,7 @@ import service.TaskManager;
 
 import java.io.IOException;
 
-abstract class BaseTaskHandlers extends BaseHttpHandler implements HttpHandler {
+abstract class BaseTaskHandlers extends BaseHttpHandler {
     protected TaskManager taskManager;
     protected String basePath;
 
