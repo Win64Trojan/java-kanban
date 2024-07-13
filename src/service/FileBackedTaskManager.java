@@ -324,10 +324,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         switch (taskType) {
 
             case EPIC, TASK -> {
+
                 return String.format("%d,%s,%s,%s,%s,,%s,%d", task.getTaskId(), taskType, task.getTaskName(),
                         task.getStatus(), task.getTaskDescription(),
                         task.getStartTime() != null ? task.getStartTime().format(DATE_TIME_FORMATTER) : "",
-                        task.getDuration().toMinutes());
+                        task.getDuration() != null ? task.getDuration().toMinutes() : 0);
             }
 
 
@@ -336,6 +337,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 return String.format("%d,%s,%s,%s,%s,%d,%s,%d", subTask.getTaskId(), taskType, subTask.getTaskName(),
                         subTask.getStatus(), subTask.getTaskDescription(), subTask.getEpicId(),
                         subTask.getStartTime().format(DATE_TIME_FORMATTER), subTask.getDuration().toMinutes());
+
+
             }
         }
 

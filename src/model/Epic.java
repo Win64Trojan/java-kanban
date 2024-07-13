@@ -10,7 +10,6 @@ package model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,8 +110,12 @@ public class Epic extends Task {
         this.endTime = endTime;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
+
+    public void addDuration(Duration duration) {
+        if (this.duration == null) {
+            this.duration = Duration.ofMinutes(0);
+        }
+        this.duration = this.duration.plus(duration);
     }
 
     @Override
@@ -122,29 +125,15 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-
-        String startTimeString = "";
-        String endTimeString = "";
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
-
-        if (startTime != null) {
-            startTimeString = startTime.format(dateTimeFormatter);
-        }
-
-        if (endTime != null) {
-            endTimeString = endTime.format(dateTimeFormatter);
-        }
-
         return "Epic{" +
-                " id=" + taskId +
-                ", subtasksSize=" + subtasks.size() +
+                "subTaskIds=" + subtasks +
+                ", endTime=" + endTime +
+                ", id=" + taskId +
                 ", name='" + taskName + '\'' +
                 ", description='" + taskDescription + '\'' +
                 ", status=" + status +
-                ", start_time=" + startTimeString +
-                ", duration=" + duration.toMinutes() + "мин." +
-                ", end_time=" + endTimeString +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
                 '}';
     }
 }

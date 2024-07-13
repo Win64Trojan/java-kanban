@@ -11,6 +11,9 @@ public class Managers {
 
 
     public static TaskManager getDefault() {
+        if (file.exists()) {
+            return FileBackedTaskManager.loadFromFile(file);
+        }
         return new FileBackedTaskManager(file);
     }
 
